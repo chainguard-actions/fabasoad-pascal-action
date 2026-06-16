@@ -1,0 +1,25 @@
+name: Test Pascal action - Custom Script
+on:
+  workflow_dispatch:
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+      - name: Create Pascal script at workspace root
+        run: |
+          printf 'program AddNumbers;\nbegin\n  WriteLn(42);\nend.\n' > "$GITHUB_WORKSPACE/AddNumbers.pas"
+      - id: action
+        uses: .
+        with:
+          path: ./AddNumbers.pas
+      - name: Assert result output is 42
+        env:
+          ACTUAL: ${{ steps.action.outputs.result }}
+        run: |
+          echo "actual: $ACTUAL"
+          if [ "$ACTUAL" != "42" ]; then
+            echo "FAIL: expected '42' but got '$ACTUAL'"
+            exit 1
+          fi
+          echo "PASS"
