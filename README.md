@@ -8,6 +8,7 @@ Hardened by [Chainguard](https://www.chainguard.dev) from the upstream action at
 
 | Version | Tag | Upstream commit |
 |---------|-----|-----------------|
+| v1.1.0 | [`v1.1.0`](https://github.com/chainguard-actions/fabasoad-pascal-action/tree/v1.1.0) | [`e82bad5`](https://github.com/fabasoad/pascal-action/commit/e82bad5c1e75f012408b2ddbf34ee151ea0d083f) |
 | v1.1.1 | [`v1.1.1`](https://github.com/chainguard-actions/fabasoad-pascal-action/tree/v1.1.1) | [`f4cf646`](https://github.com/fabasoad/pascal-action/commit/f4cf6462166cff1af59f6f044bc795fe3cf43c4b) |
 
 ## Privacy
