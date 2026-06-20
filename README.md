@@ -1,15 +1,65 @@
-# fabasoad/pascal-action
+<!-- markdownlint-disable-file MD013 -->
+
+# Run Pascal script action
+
+[![Stand With Ukraine](https://raw.githubusercontent.com/vshymanskyy/StandWithUkraine/main/badges/StandWithUkraine.svg)](https://stand-with-ukraine.pp.ua)
+![GitHub release](https://img.shields.io/github/v/release/fabasoad/pascal-action?include_prereleases)
+![functional-tests](https://github.com/fabasoad/pascal-action/actions/workflows/functional-tests.yml/badge.svg)
+![security](https://github.com/fabasoad/pascal-action/actions/workflows/security.yml/badge.svg)
+![linting](https://github.com/fabasoad/pascal-action/actions/workflows/linting.yml/badge.svg)
 
 This action runs Pascal script.
 
-Hardened by [Chainguard](https://www.chainguard.dev) from the upstream action at [https://github.com/fabasoad/pascal-action](https://github.com/fabasoad/pascal-action).
+## Prerequisites
 
-## Versions
+None.
 
-| Version | Tag | Upstream commit |
-|---------|-----|-----------------|
-| v1.1.0 | [`v1.1.0`](https://github.com/chainguard-actions/fabasoad-pascal-action/tree/v1.1.0) | [`e82bad5`](https://github.com/fabasoad/pascal-action/commit/e82bad5c1e75f012408b2ddbf34ee151ea0d083f) |
-| v1.1.1 | [`v1.1.1`](https://github.com/chainguard-actions/fabasoad-pascal-action/tree/v1.1.1) | [`f4cf646`](https://github.com/fabasoad/pascal-action/commit/f4cf6462166cff1af59f6f044bc795fe3cf43c4b) |
+## Inputs
+
+```yaml
+- uses: fabasoad/pascal-action@v1
+  with:
+    # (Required) Path to the script file.
+    path: ./HelloWorld.pas
+```
+
+## Outputs
+
+<!-- prettier-ignore-start -->
+| Name   | Required | Description               |
+|--------|----------|---------------------------|
+| result | Yes      | Result of script running. |
+<!-- prettier-ignore-end -->
+
+## Example usage
+
+### Workflow configuration
+
+```yaml
+name: Pascal
+
+on: push
+
+jobs:
+  pascal:
+    name: Run Pascal script
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@main
+      - uses: fabasoad/pascal-action@main
+        id: pascal
+        with:
+          path: "./HelloWorld.pas"
+      - name: Print result
+        run: echo "${{ steps.pascal.outputs.result }}"
+```
+
+### Result
+
+```shell
+Run echo "Hello World!"
+Hello World!
+```
 
 ## Privacy
 
