@@ -6,8 +6,7 @@ on: # yamllint disable-line rule:truthy
     branches:
       - "main"
 
-permissions:
-  contents: read
+permissions: {}
 
 defaults:
   run:
@@ -20,9 +19,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout ${{ github.repository }}
-        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
       - name: Run Pascal script
-        uses: fabasoad/pascal-action@63480abdb285112e4e6ea5b978bb22f643991a6e # main
+        uses: fabasoad/pascal-action@33e089a71e00c93ef3b93a9758f75e93cf8bf32f # main
         id: pascal
         with:
           path: ./HelloWorld.pas

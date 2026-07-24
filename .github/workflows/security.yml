@@ -7,8 +7,7 @@ on: # yamllint disable-line rule:truthy
     branches:
       - main
 
-permissions:
-  contents: read
+permissions: {}
 
 jobs:
   build-image:
@@ -20,7 +19,7 @@ jobs:
       artifact-name: "${{ steps.artifact.outputs.name }}"
     steps:
       - name: Checkout ${{ github.repository }}
-        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
       - name: Build image
         id: build-image
         uses: docker/build-push-action@10e90e3645eae34f1e60eeb005ba3a3d33f178e8 # v6
@@ -29,11 +28,11 @@ jobs:
       - name: Save image
         id: artifact
         env:
-          BUILD_IMAGE_DIGEST: ${{ steps.build-image.outputs.digest }}
+          BUILD_DIGEST: ${{ steps.build-image.outputs.digest }}
         run: |
           artifact_name="$(date +%s)"
           archive_path="${RUNNER_TEMP}/${artifact_name}.tar"
-          docker save --output "${archive_path}" "$BUILD_IMAGE_DIGEST"
+          docker save --output "${archive_path}" "$BUILD_DIGEST"
           echo "path=${archive_path}" >> "$GITHUB_OUTPUT"
           echo "name=${artifact_name}" >> "$GITHUB_OUTPUT"
       - name: Upload artifact
@@ -50,7 +49,7 @@ jobs:
     permissions:
       contents: read
       security-events: write
-    uses: fabasoad/reusable-workflows/.github/workflows/wf-security-sast.yml@e4ff663d3bc9ff9d225d2e967a0f94aad342d218 # main
+    uses: fabasoad/reusable-workflows/.github/workflows/wf-security-sast.yml@c5bd8945762dab6d2f5168b65f10355887ea40a3 # main
     with:
       image: true
       image-artifact-name: "${{ needs.build-image.outputs.artifact-name }}"
