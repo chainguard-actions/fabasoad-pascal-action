@@ -1,0 +1,27 @@
+---
+name: Test Pascal script from committed fixture file
+on:
+  workflow_dispatch:
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+      - id: action
+        uses: .
+        with:
+          path: tests/fixtures/greeting.pas
+      - name: Assert greeting result
+        env:
+          ACTUAL: ${{ steps.action.outputs.result }}
+        run: |
+          echo "actual: $ACTUAL"
+          if [ -z "$ACTUAL" ]; then
+            echo "FAIL: result output is empty"
+            exit 1
+          fi
+          if ! echo "$ACTUAL" | grep -q "Greetings from Pascal"; then
+            echo "FAIL: expected 'Greetings from Pascal' in output, got: $ACTUAL"
+            exit 1
+          fi
+          echo "PASS"

@@ -1,0 +1,35 @@
+---
+name: Test basic Pascal script execution
+on:
+  workflow_dispatch:
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+      - name: Create Pascal script
+        run: |
+          cat > "$GITHUB_WORKSPACE/tests/hello.pas" << 'EOF'
+          program Hello;
+          begin
+            WriteLn('Hello World!');
+          end.
+          EOF
+      - id: action
+        uses: .
+        with:
+          path: tests/hello.pas
+      - name: Assert result output
+        env:
+          ACTUAL: ${{ steps.action.outputs.result }}
+        run: |
+          echo "actual: $ACTUAL"
+          if [ -z "$ACTUAL" ]; then
+            echo "FAIL: result output is empty"
+            exit 1
+          fi
+          if ! echo "$ACTUAL" | grep -q "Hello World"; then
+            echo "FAIL: expected 'Hello World' in output, got: $ACTUAL"
+            exit 1
+          fi
+          echo "PASS"
