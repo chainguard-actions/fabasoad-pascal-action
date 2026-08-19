@@ -1,0 +1,27 @@
+---
+name: Functional tests (Remote)
+
+on: # yamllint disable-line rule:truthy
+  push:
+    branches:
+      - "main"
+
+permissions:
+  contents: read
+
+jobs:
+  functional-tests:
+    name: Functional tests
+    timeout-minutes: 5
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+      - uses: fabasoad/pascal-action@489a5dc854922250f778319ee7060e7fe764b906 # main
+        id: pascal
+        with:
+          path: ./HelloWorld.pas
+      - name: Validate result
+        env:
+          PASCAL_RESULT: ${{ steps.pascal.outputs.result }}
+        run: |
+          [[ "Hello World!" == "$PASCAL_RESULT" ]] || exit 1;
