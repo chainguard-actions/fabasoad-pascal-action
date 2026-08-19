@@ -1,0 +1,41 @@
+---
+name: Functional Tests
+
+on: # yamllint disable-line rule:truthy
+  push:
+    branches:
+      - main
+  pull_request:
+    paths:
+      - .github/workflows/functional-tests.yml
+      - action.yml
+  schedule:
+    # Every Friday at 09:00 JST
+    - cron: "0 0 * * 5"
+  workflow_dispatch: {}
+
+permissions: {}
+
+defaults:
+  run:
+    shell: sh
+
+jobs:
+  run-script:
+    name: Run script
+    timeout-minutes: 5
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout ${{ github.repository }}
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+      - uses: ./
+        id: pascal
+        with:
+          path: ./HelloWorld.pas
+      - name: Validate result
+        env:
+          PASCAL_RESULT: ${{ steps.pascal.outputs.result }}
+        run: |
+          [ "Hello World!" = "${PASCAL_RESULT}" ] || exit 1;

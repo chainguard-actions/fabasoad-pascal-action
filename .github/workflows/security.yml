@@ -1,0 +1,60 @@
+---
+name: Security
+
+on: # yamllint disable-line rule:truthy
+  pull_request: {}
+  push:
+    branches:
+      - main
+
+permissions: {}
+
+jobs:
+  build-image:
+    name: Build image
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    outputs:
+      artifact-name: "${{ steps.artifact.outputs.name }}"
+    steps:
+      - name: Checkout ${{ github.repository }}
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+      - name: Build image
+        id: build-image
+        uses: docker/build-push-action@10e90e3645eae34f1e60eeb005ba3a3d33f178e8 # v6
+        with:
+          push: false
+      - name: Save image
+        id: artifact
+        env:
+          BUILD_DIGEST: ${{ steps.build-image.outputs.digest }}
+        run: |
+          artifact_name="$(date +%s)"
+          archive_path="${RUNNER_TEMP}/${artifact_name}.tar"
+          safe_digest="$(printf '%s' "${BUILD_DIGEST}" | tr -d '\n\r')"
+          docker save --output "${archive_path}" "${safe_digest}"
+          safe_archive_path="$(printf '%s' "${archive_path}" | tr -d '\n\r')"
+          safe_artifact_name="$(printf '%s' "${artifact_name}" | tr -d '\n\r')"
+          echo "path=${safe_archive_path}" >> "$GITHUB_OUTPUT"
+          echo "name=${safe_artifact_name}" >> "$GITHUB_OUTPUT"
+      - name: Upload artifact
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: "${{ steps.artifact.outputs.name }}"
+          path: "${{ steps.artifact.outputs.path }}"
+          retention-days: "1"
+          compression-level: "0"
+  sast:
+    name: SAST
+    needs: ["build-image"]
+    permissions:
+      contents: read
+      security-events: write
+    uses: fabasoad/reusable-workflows/.github/workflows/wf-security-sast.yml@10062f8186847226cb4865efbb8047795d372bae # main
+    with:
+      code-scanning: true
+      image: true
+      image-artifact-name: "${{ needs.build-image.outputs.artifact-name }}"
+      sca: true
